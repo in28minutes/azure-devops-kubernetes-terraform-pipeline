@@ -11,7 +11,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-
 stages:
 - stage: Build
   jobs:
@@ -35,4 +34,4 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo deploy to Dev
+          - script: echo deploy to QA
