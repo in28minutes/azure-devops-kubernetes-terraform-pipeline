@@ -1,22 +1,14 @@
 trigger:
 - master
 
-# pool:
-#   vmImage: 'ubuntu-latest'
-
-strategy:
-  matrix:
-    linux:
-      operatingSystem: 'ubuntu-latest'
-    mac:
-      operatingSystem: 'macos-latest'
+pool:
+  vmImage: 'ubuntu-latest'
 
 stages:
 - stage: Build
   jobs:
   - job: FirstJob
     steps:
-    - bash: echo $(operatingSystem)
     - bash: echo Build FirstJob
     - bash: echo $(PipelineLevelVariable)
     - bash: echo $(Build.BuildNumber)
