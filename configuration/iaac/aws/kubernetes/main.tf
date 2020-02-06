@@ -76,3 +76,7 @@ resource "kubernetes_cluster_role_binding" "example" {
     namespace = "default"
   }
 }
+
+provider "aws" {
+  region  = "us-east-1"
+}
