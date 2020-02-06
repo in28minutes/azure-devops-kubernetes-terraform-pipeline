@@ -15,7 +15,7 @@ public class InstanceInformationService {
 	private String hostName;
 
 	public String retrieveInstanceInfo() {
-		return hostName + " v2 " + hostName.substring(hostName.length()-5);
+		return hostName + " v3 " + hostName.substring(hostName.length()-5);
 	}
 
 }
