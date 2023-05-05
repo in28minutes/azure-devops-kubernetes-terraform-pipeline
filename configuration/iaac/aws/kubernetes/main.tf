@@ -21,22 +21,21 @@ data "aws_subnet_ids" "subnets" {
   vpc_id = aws_default_vpc.default.id
 }
 
+
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint #module.in28minutes-cluster.cluster_endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  //load_config_file       = false
- // version                = "~> 1.9"
+  //>>Uncomment this section once EKS is created - Start
+  # host                   = data.aws_eks_cluster.cluster.endpoint #module.in28minutes-cluster.cluster_endpoint
+  # cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
+  # token                  = data.aws_eks_cluster_auth.cluster.token
+  //>>Uncomment this section once EKS is created - End
 }
 
 module "in28minutes-cluster" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = "in28minutes-cluster"
   cluster_version = "1.23"
-  subnet_ids         = ["subnet-3f7b2563", "subnet-4a7d6a45", "subnet-ab24e9f7"] #CHANGE # Donot choose subnet from us-east-1e
-  #subnets = data.aws_subnet_ids.subnets.ids
+  subnet_ids         = ["subnet-0ba16627", "subnet-02db6b4a", "subnet-e08479ba"] #CHANGE # Donot choose subnet from us-east-1e
   vpc_id          = aws_default_vpc.default.id
-  #vpc_id         = "vpc-1234556abcdef"
 
   //Newly added entry to allow connection to the api server
   //Without this change error in step 163 in course will not go away
@@ -45,7 +44,7 @@ module "in28minutes-cluster" {
 # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
     instance_types = ["t2.small", "t2.medium"]
-    }
+  }
 
   eks_managed_node_groups = {
     blue = {}
@@ -59,33 +58,35 @@ module "in28minutes-cluster" {
   }
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.in28minutes-cluster.cluster_id
-}
+//>>Uncomment this section once EKS is created - Start
+#  data "aws_eks_cluster" "cluster" {
+#    name = "in28minutes-cluster" #module.in28minutes-cluster.cluster_name
+#  }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.in28minutes-cluster.cluster_id
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = "in28minutes-cluster" #module.in28minutes-cluster.cluster_name
+# }
 
 
-# We will use ServiceAccount to connect to K8S Cluster in CI/CD mode
-# ServiceAccount needs permissions to create deployments 
-# and services in default namespace
-resource "kubernetes_cluster_role_binding" "example" {
-  metadata {
-    name = "fabric8-rbac"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-  subject {
-    kind      = "ServiceAccount"
-    name      = "default"
-    namespace = "default"
-  }
-}
+# # We will use ServiceAccount to connect to K8S Cluster in CI/CD mode
+# # ServiceAccount needs permissions to create deployments 
+# # and services in default namespace
+# resource "kubernetes_cluster_role_binding" "example" {
+#   metadata {
+#     name = "fabric8-rbac"
+#   }
+#   role_ref {
+#     api_group = "rbac.authorization.k8s.io"
+#     kind      = "ClusterRole"
+#     name      = "cluster-admin"
+#   }
+#   subject {
+#     kind      = "ServiceAccount"
+#     name      = "default"
+#     namespace = "default"
+#   }
+# }
+//>>Uncomment this section once EKS is created - End
 
 # Needed to set the default region
 provider "aws" {
